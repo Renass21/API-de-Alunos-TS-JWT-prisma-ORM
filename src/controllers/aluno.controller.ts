@@ -30,7 +30,7 @@ export class AlunoController {
                 data: result,
             });
        } catch(error: any){
-            return res.status(500).send({
+            return res.status(500).send({ 
                 ok: false,
                 message: error.toString()
             });
@@ -69,4 +69,4 @@ export class AlunoController {
             });
         }
     }
-};
+}
