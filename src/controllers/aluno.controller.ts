@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { Aluno } from "../models/aluno.model";
-import repository from "../database/prisma.client";
+import repository from "../database/prisma.repository";
 import { ok } from "assert";
 
 export class AlunoController {
@@ -20,7 +20,7 @@ export class AlunoController {
             const aluno = new Aluno(nome, email, senha, idade);
 
             const result = await repository.aluno.create({
-                data: aluno
+                data: aluno,
             });
 
             //saida
@@ -36,7 +36,7 @@ export class AlunoController {
             });
        }
     }  
-    //Obter um aluno ppelo ID    
+    //Obter um aluno pelo ID    
     public async obterAluno(req: Request, res: Response) {
         try {
             //1- Entrada 

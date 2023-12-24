@@ -6,7 +6,7 @@ const app = express();
 app.use(express.json());
 
 const alunoController = new AlunoController();
-//Criar novo aluno
+
 app.post("/aluno", alunoController.criarAluno); 
 app.get("/aluno:id", alunoController.obterAluno);
 
