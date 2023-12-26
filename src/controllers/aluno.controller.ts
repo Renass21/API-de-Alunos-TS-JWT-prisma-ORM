@@ -13,7 +13,7 @@ export class AlunoController {
             if(!nome || !email || !senha) {
                 return res.status(400).send({
                     ok: false,
-                    message: "Os campos obrigatórios não foramm informados"
+                    message: "Os campos obrigatórios não foram informados"
                 });
             }
             //Processamento
@@ -45,7 +45,12 @@ export class AlunoController {
             const aluno = await repository.aluno.findUnique({
                 where: {
                     id //Where id = id
-                }
+                },
+                select: {
+                   id: true,
+                   nome: true,
+                   email: true,
+                },
             })
 
             if(!aluno) {
@@ -69,4 +74,43 @@ export class AlunoController {
             });
         }
     }
+
+
+    public async deletarAluno(req: Request, res: Response) {
+        try {
+            //entrada
+            const { id } = req.params;
+            //processamento
+            // verificar se o aluno existe, se não 404
+            const aluno = await repository.aluno.findUnique({
+                where: {
+                    id,
+                }
+            });
+
+            if(!aluno) {
+               return res.status(404).send({
+                    ok: false,
+                    message: "Aluno não encontrado"
+                });    
+            }
+            //deletar aluno
+            await repository.aluno.delete({
+                where: {
+                    id,
+                }    
+            });
+            //saida
+            return res.status(200).send({
+                ok: true,
+                message: "Aluno deletado com sucesso"
+            });
+        } catch (error: any) {
+            return res.status(500).send({
+                ok: false,
+                message: error.toString()
+            }); 
+        }
+    }
+
 }
