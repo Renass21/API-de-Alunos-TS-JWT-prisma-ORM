@@ -53,15 +53,15 @@ export class AlunoController {
                 return res.status(404).send({
                     ok: false,
                     message: "Usuario não encontrado",   
-                })
+                });
             }
+
             //3- Saida
             return res.status(200).send({
                 ok: true,
                 message: "Usuario obtido com successo",
                 data: aluno,
             });
-
         } catch (error: any){
             return res.status(500).send({
                 ok: false,
@@ -103,7 +103,7 @@ export class AlunoController {
             const { id } = req.params;
             const { nome, senha, idade } = req.body;
             
-            if(!nome || !senha || !idade) {
+            if (!nome && !senha && !idade) {
                 return res.status(400).send({
                     ok: false,
                     message: "Informe ao menos um campo para atualizar"
