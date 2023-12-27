@@ -41,23 +41,18 @@ export class AlunoController {
         try {
             //1- Entrada 
             const { id } = req.params;
+            
             //2- Processamento
             const aluno = await repository.aluno.findUnique({
                 where: {
-                    id //Where id = id
+                    id,
                 },
-                select: {
-                   id: true,
-                   nome: true,
-                   email: true,
-                },
-            })
+            });
 
             if(!aluno) {
                 return res.status(404).send({
                     ok: false,
-                    message: "Usuario não encontrado",
-                    
+                    message: "Usuario não encontrado",   
                 })
             }
             //3- Saida
@@ -74,14 +69,41 @@ export class AlunoController {
             });
         }
     }
+    public async listarAlunos(req: Request, res: Response) {
+        try {
+            //entrada
+            const { Aluno } = req.params;
+            //processamento
+            const listaDeAlunos = await repository.aluno.findMany()
+            
+            if(!listaDeAlunos) {
+                return res.status(404).send({
+                    ok: false,
+                    message: "Nenhum aluno encontrado",
+                })
+            }; 
+            //Saida 
+            return res.status(200).send({
+                ok: true,
+                message: "Alunos listados com sucesso",
+                data: listaDeAlunos,
+            })
 
+        } catch (error: any) {
+            return res.status(500).send({
+                ok: false,
+                message: error.toString()
+            }); 
+        }
+    }
+    //Atualizar aluno
     public async atualizarAluno(req: Request, res: Response) {
         try {
             //Entrada 
             const { id } = req.params;
-            const { nome, email, senha, idade } = req.body;
+            const { nome, senha, idade } = req.body;
             
-            if(!nome || !email || !senha || !idade) {
+            if(!nome || !senha || !idade) {
                 return res.status(400).send({
                     ok: false,
                     message: "Informe ao menos um campo para atualizar"
@@ -95,7 +117,7 @@ export class AlunoController {
                 }
             });
             if(!aluno) {
-                res.status(404).send({
+                return res.status(404).send({
                     ok: false,
                     message:"Aluno não encontrado"
                 });
@@ -107,7 +129,6 @@ export class AlunoController {
                 },
                  data: {
                     nome,
-                    email,
                     idade,
                     senha,
                 },
@@ -127,7 +148,7 @@ export class AlunoController {
             });
         }
     }
-
+    //Deletar Aluno
     public async deletarAluno(req: Request, res: Response) {
         try {
             //entrada

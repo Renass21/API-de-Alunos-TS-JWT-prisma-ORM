@@ -8,9 +8,10 @@ app.use(express.json());
 const alunoController = new AlunoController();
 
 app.post("/aluno", alunoController.criarAluno); 
-app.get("/aluno:id", alunoController.obterAluno);
-app.get("/aluno:id", alunoController.deletarAluno);
-app.put("/aluno:id", alunoController.atualizarAluno);
+app.get("/aluno/:id", alunoController.obterAluno);
+app.get("/aluno", alunoController.listarAlunos);
+app.get("/aluno/:id", alunoController.deletarAluno);
+app.put("/aluno/:id", alunoController.atualizarAluno);
 
 
 app.listen(3000, () => {
