@@ -9,6 +9,9 @@ const alunoController = new AlunoController();
 
 app.post("/aluno", alunoController.criarAluno); 
 app.get("/aluno:id", alunoController.obterAluno);
+app.get("/aluno:id", alunoController.deletarAluno);
+app.put("/aluno:id", alunoController.atualizarAluno);
+
 
 app.listen(3000, () => {
     console.log("Server is running");

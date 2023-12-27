@@ -75,6 +75,58 @@ export class AlunoController {
         }
     }
 
+    public async atualizarAluno(req: Request, res: Response) {
+        try {
+            //Entrada 
+            const { id } = req.params;
+            const { nome, email, senha, idade } = req.body;
+            
+            if(!nome || !email || !senha || !idade) {
+                return res.status(400).send({
+                    ok: false,
+                    message: "Informe ao menos um campo para atualizar"
+                });    
+            }
+            // Processamento
+            // Verificar se o aluno existe, se não 404
+            const aluno = await repository.aluno.findUnique({
+                where: {
+                    id
+                }
+            });
+            if(!aluno) {
+                res.status(404).send({
+                    ok: false,
+                    message:"Aluno não encontrado"
+                });
+            }
+            //Atualizar os dados do aluno
+            const result = await repository.aluno.update({
+                where: {
+                    id
+                },
+                 data: {
+                    nome,
+                    email,
+                    idade,
+                    senha,
+                },
+            });
+            
+            // Saida
+             return res.status(200).send({
+                ok: true,
+                message: "Aluno editado com sucesso",
+                data: result,
+             });   
+
+        } catch (error: any) {
+            return res.status(500).send({
+                ok: false,
+                message: error.toString()
+            });
+        }
+    }
 
     public async deletarAluno(req: Request, res: Response) {
         try {
