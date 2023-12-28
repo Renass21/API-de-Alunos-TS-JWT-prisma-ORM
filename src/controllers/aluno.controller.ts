@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { Aluno } from "../models/aluno.model";
 import repository from "../database/prisma.repository";
 import { ok } from "assert";
+import { errorBadRequest, errorNotFound, serverError } from "../util/response.helper";
 
 export class AlunoController {
     //Criar um novo aluno
@@ -11,10 +12,7 @@ export class AlunoController {
             const { nome, email, senha, idade } = req.body;
 
             if(!nome || !email || !senha) {
-                return res.status(400).send({
-                    ok: false,
-                    message: "Os campos obrigatórios não foram informados"
-                });
+                return errorBadRequest(res);
             }
             //Processamento
             const aluno = new Aluno(nome, email, senha, idade);
@@ -30,10 +28,7 @@ export class AlunoController {
                 data: result,
             });
        } catch(error: any){
-            return res.status(500).send({ 
-                ok: false,
-                message: error.toString()
-            });
+            return serverError(res, error);
        }
     }  
     //Obter um aluno pelo ID    
@@ -50,10 +45,7 @@ export class AlunoController {
             });
 
             if(!aluno) {
-                return res.status(404).send({
-                    ok: false,
-                    message: "Usuario não encontrado",   
-                });
+                return errorNotFound(res, "Aluno");
             }
 
             //3- Saida
@@ -63,10 +55,7 @@ export class AlunoController {
                 data: aluno,
             });
         } catch (error: any){
-            return res.status(500).send({
-                ok: false,
-                message: error.toString()
-            });
+            return serverError(res, error);
         }
     }
     public async listarAlunos(req: Request, res: Response) {
@@ -77,10 +66,7 @@ export class AlunoController {
             const listaDeAlunos = await repository.aluno.findMany()
             
             if(!listaDeAlunos) {
-                return res.status(404).send({
-                    ok: false,
-                    message: "Nenhum aluno encontrado",
-                })
+                return errorNotFound(res, "Alunos");
             }; 
             //Saida 
             return res.status(200).send({
@@ -90,10 +76,7 @@ export class AlunoController {
             })
 
         } catch (error: any) {
-            return res.status(500).send({
-                ok: false,
-                message: error.toString()
-            }); 
+            return serverError(res, error);
         }
     }
     //Atualizar aluno
@@ -104,10 +87,7 @@ export class AlunoController {
             const { nome, senha, idade } = req.body;
             
             if (!nome && !senha && !idade) {
-                return res.status(400).send({
-                    ok: false,
-                    message: "Informe ao menos um campo para atualizar"
-                });    
+                return errorBadRequest(res);    
             }
             // Processamento
             // Verificar se o aluno existe, se não 404
@@ -117,10 +97,7 @@ export class AlunoController {
                 }
             });
             if(!aluno) {
-                return res.status(404).send({
-                    ok: false,
-                    message:"Aluno não encontrado"
-                });
+                return errorNotFound(res, "Aluno");
             }
             //Atualizar os dados do aluno
             const result = await repository.aluno.update({
@@ -142,10 +119,7 @@ export class AlunoController {
              });   
 
         } catch (error: any) {
-            return res.status(500).send({
-                ok: false,
-                message: error.toString()
-            });
+            return serverError(res, error);
         }
     }
     //Deletar Aluno
@@ -162,11 +136,9 @@ export class AlunoController {
             });
 
             if(!aluno) {
-               return res.status(404).send({
-                    ok: false,
-                    message: "Aluno não encontrado"
-                });    
-            }
+               return errorNotFound(res, "Aluno");    
+            };
+            
             //deletar aluno
             await repository.aluno.delete({
                 where: {
@@ -179,10 +151,7 @@ export class AlunoController {
                 message: "Aluno deletado com sucesso"
             });
         } catch (error: any) {
-            return res.status(500).send({
-                ok: false,
-                message: error.toString()
-            }); 
+            return serverError(res, error); 
         }
     }
 
