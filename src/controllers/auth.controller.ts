@@ -22,18 +22,27 @@ export class AuthController {
                 select: {
                     id: true,
                     nome: true,
-                }
+                },
             })
 
             if (!aluno) {
                 return res.status(401).send({
                     ok: false,
-
                     message: "User unauthorized!"
                 })
             }
             //gerar a credencial de acesso ao usuario
             const token = randomUUID();
+
+            //salvar token na tabela do aluno
+            await repository.aluno.update({
+                where: {
+                    id: aluno.id,
+                },
+                data: {
+                    token
+                },
+            });
 
             //Saida
             return res.status(200).send({
@@ -42,9 +51,9 @@ export class AuthController {
                 data: {
                     id: aluno.id,
                     nome: aluno.nome,
-                    token,
+                    token
                     },
-            })
+            });
         
         } catch (error) {
             return serverError(res, error)

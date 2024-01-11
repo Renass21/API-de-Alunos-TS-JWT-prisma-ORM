@@ -12,11 +12,21 @@ export class AvaliacaoController {
             //entrada
                 const { id } = req.params;
                 const { disciplina, nota } = req.body;
-            
+                const {authorization } = req.headers;
+
             if(!disciplina || !nota){
                 return errorBadRequest(res);
-            }    
+            } 
+           
+            //verifica se o token foi autorizado
+            if (!authorization) {
+                return res.status(401).send({
+                    ok: false,
+                    message:"Token unauthorized"
+                });
+            }
             //processamento
+
             //Verificar se o aluno existe, se não 404
             const aluno = await repository.aluno.findUnique({
                 where: {
@@ -27,11 +37,21 @@ export class AvaliacaoController {
             if (!aluno){
                 return errorNotFound(res, "Aluno");
             };
+            
+            //verifica se o token é valido
+            if (aluno.token !== authorization) {
+                return res.status(401).send({
+                    ok: false,
+                    message: "Token invalid!"
+                })
+            };
+            
             // Adapt do aluno (Prisma) para o (backEnd)
             const alunoBackEnd = adaptAlunoPrisma(aluno);
 
             //Criar o model backend da avaliação
             const avaliação = new Avaliacao(disciplina, nota, alunoBackEnd);
+            
             //Salvar no banco de dados
             const result  = await repository.avaliacao.create({
                 data: {
@@ -52,6 +72,7 @@ export class AvaliacaoController {
             return serverError(res, error);
         }
     }
+    
     //Listar as avaliações de um aluno especifico
     public async listarAvaliacoes(req: Request, res: Response) {
         try {
