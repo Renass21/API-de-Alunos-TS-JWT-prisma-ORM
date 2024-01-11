@@ -28,19 +28,18 @@ export class AvaliacaoController {
                 return errorNotFound(res, "Aluno");
             };
             // Adapt do aluno (Prisma) para o (backEnd)
-            const AlunoBackEnd = adaptAlunoPrisma(aluno);
+            const alunoBackEnd = adaptAlunoPrisma(aluno);
 
             //Criar o model backend da avaliação
-            const avaliação = new Avaliacao(disciplina, nota, AlunoBackEnd);
+            const avaliação = new Avaliacao(disciplina, nota, alunoBackEnd);
             //Salvar no banco de dados
             const result  = await repository.avaliacao.create({
                 data: {
                     id: avaliação.id,
                     disciplina: avaliação.disciplina,
                     nota: avaliação.nota,
-                    idAluno: aluno.id
-
-                }
+                    idAluno: aluno.id,
+                },
             });
             //saida
             return res.status(201).send({

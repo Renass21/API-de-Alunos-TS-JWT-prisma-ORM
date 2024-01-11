@@ -16,6 +16,8 @@ model Aluno {
   email String @db.VarChar(50) @unique
   senha String @db.VarChar(50)
   
+  token String?
+
   idade Int? @db.SmallInt
   endereco Endereco? //1-1
   avaliacoes Avaliacao[] //1-N
