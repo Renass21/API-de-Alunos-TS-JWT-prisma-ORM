@@ -18,7 +18,8 @@ app.put("/aluno/:id", alunoController.atualizarAluno);
 //Rotas de avaliação
 
 app.post("/aluno/:id/avaliacao", avaliacaoController.criarAvaliacao);
-
+app.get("/aluno/:id/avaliacao", avaliacaoController.listarAvaliacoes);
+app.put("/aluno/:id/avaliacao/:idAvaliacao", avaliacaoController.atualizarAvaliacao);
 
 app.listen(3000, () => {
     console.log("Server is running");

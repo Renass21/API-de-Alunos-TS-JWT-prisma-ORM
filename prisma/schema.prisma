@@ -17,15 +17,15 @@ model Aluno {
   senha String @db.VarChar(50)
   
   idade Int? @db.SmallInt
-  endereco Endereco?
-  avaliacoes Avaliacao[]
+  endereco Endereco? //1-1
+  avaliacoes Avaliacao[] //1-N
 
   dthrCriacao DateTime @default(now()) @map("dthr_criacao")
   dthrAtualizacao DateTime @updatedAt @map("dthr__atualizacao")
   
   @@map("aluno")
 }
-
+//1-1
 model Endereco {
   idAluno String @db.Uuid @id @map("id_aluno")
   rua String @db.VarChar(30)
@@ -39,7 +39,7 @@ model Endereco {
  
   @@map("endereco")
 }
-
+//1-N
 model Avaliacao {
   id String @db.Uuid @id @default(uuid())
   disciplina String @db.VarChar(30)
